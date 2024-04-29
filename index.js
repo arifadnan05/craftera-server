@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -69,6 +69,17 @@ async function run() {
     // dynamic craft item my item
     app.get('/craft-item/:email', async (req, res) => {
       const result = await craftItemCollection.find({ userEmail: req.params.email }).toArray();
+      res.send(result)
+    })
+    // Update my list item 
+
+
+
+    // Delete my craft items
+    app.delete('/craft-item/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await craftItemCollection.deleteOne(query);
       res.send(result)
     })
 
