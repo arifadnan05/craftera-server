@@ -36,6 +36,7 @@ async function run() {
     // Send a ping to confirm a successful connection
     const userCollection = client.db('userDB').collection('user')
     const craftItemCollection = client.db('userDB').collection('craft-item')
+    const homeCardCollection = client.db('userDB').collection('art-craft-card')
 
 
     // user adding api
@@ -66,13 +67,53 @@ async function run() {
       res.send(result)
     })
 
-    // dynamic craft item my item
+
+
+
+    app.get('/art-craft-card', async (req, res) => {
+      const cursor = homeCardCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+    // dynamic craft my list
     app.get('/craft-item/:email', async (req, res) => {
       const result = await craftItemCollection.find({ userEmail: req.params.email }).toArray();
       res.send(result)
     })
-    // Update my list item 
 
+
+    // Update my list item 
+    app.get('/craftitem/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await craftItemCollection.findOne(query);
+      res.send(result)
+    })
+
+
+    app.put('/craftitem/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedCraftItem = req.body;
+      const items = {
+        $set: {
+
+          item_name: updatedCraftItem.item_name,
+          subcategory_name: updatedCraftItem.subcategory_name,
+          price: updatedCraftItem.price,
+          processing_time: updatedCraftItem.processing_time,
+          rating: updatedCraftItem.rating,
+          customization: updatedCraftItem.customization,
+          stockStatus: updatedCraftItem.stockStatus,
+          short_description: updatedCraftItem.short_description,
+          photo: updatedCraftItem.photo,
+        }
+      }
+      const result = await craftItemCollection.updateOne(filter, items, options);
+      res.send(result)
+    })
 
 
     // Delete my craft items
