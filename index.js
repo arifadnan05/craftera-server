@@ -42,7 +42,7 @@ async function run() {
     // user adding api
     app.post('/user', async (req, res) => {
       const user = req.body;
-      console.log(user)
+      // console.log(user)
       const result = await userCollection.insertOne(user)
       res.send(result)
     })
@@ -56,7 +56,7 @@ async function run() {
     // all craft item api
     app.post('/craft-item', async (req, res) => {
       const user = req.body;
-      console.log(user)
+      // console.log(user)
       const result = await craftItemCollection.insertOne(user)
       res.send(result)
     })
@@ -66,7 +66,10 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
-
+    app.get('/category/:subCategory', async (req, res) => {
+      const result = await craftItemCollection.find({ subCategory: req.params.subCategory }).toArray();
+      res.send(result)
+    })
 
 
 
